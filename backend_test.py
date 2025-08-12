@@ -561,6 +561,17 @@ class BackendTester:
         except Exception as e:
             self.log_test("404 Error Handling (Game)", False, f"Error: {str(e)}")
         
+        # Test 404 for game series
+        try:
+            response = self.session.get(f"{self.base_url}/game-series/{fake_id}")
+            if response.status_code == 404:
+                self.log_test("404 Error Handling (Game Series)", True, "Correctly returned 404 for non-existent game series")
+            else:
+                self.log_test("404 Error Handling (Game Series)", False, 
+                            f"Expected 404, got: {response.status_code}")
+        except Exception as e:
+            self.log_test("404 Error Handling (Game Series)", False, f"Error: {str(e)}")
+        
         # Test 404 for movie series
         try:
             response = self.session.get(f"{self.base_url}/movie-series/{fake_id}")

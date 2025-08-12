@@ -201,6 +201,209 @@ class BackendTester:
         except Exception as e:
             self.log_test("Game Validation (Missing Name)", False, f"Error: {str(e)}")
     
+    def test_create_game_series(self):
+        """Test creating game series with various data"""
+        test_series = [
+            {
+                "series_name": "Grand Theft Auto",
+                "games": [
+                    {
+                        "name": "Grand Theft Auto: Vice City",
+                        "image_url": "https://images.igdb.com/igdb/image/upload/t_cover_big/co1r7f.jpg",
+                        "time_played": "40 hours",
+                        "completion_status": "Completed",
+                        "rating": 9,
+                        "notes": "Classic 80s setting",
+                        "platinum_status": False,
+                        "trophies_earned": 35,
+                        "trophies_total": 40
+                    },
+                    {
+                        "name": "Grand Theft Auto: San Andreas",
+                        "image_url": "https://images.igdb.com/igdb/image/upload/t_cover_big/co1r7g.jpg",
+                        "time_played": "60 hours",
+                        "completion_status": "Completed",
+                        "rating": 10,
+                        "notes": "Best GTA game ever made",
+                        "platinum_status": True,
+                        "trophies_earned": 70,
+                        "trophies_total": 70
+                    }
+                ]
+            },
+            {
+                "series_name": "Assassin's Creed",
+                "games": [
+                    {
+                        "name": "Assassin's Creed II",
+                        "image_url": "https://images.igdb.com/igdb/image/upload/t_cover_big/co1r8h.jpg",
+                        "time_played": "25 hours",
+                        "completion_status": "Completed",
+                        "rating": 9,
+                        "notes": "Renaissance Italy setting",
+                        "platinum_status": False,
+                        "trophies_earned": 45,
+                        "trophies_total": 51
+                    }
+                ]
+            },
+            {
+                "series_name": "Call of Duty",
+                "games": []  # Empty series to test adding games later
+            }
+        ]
+        
+        for i, series_data in enumerate(test_series):
+            try:
+                response = self.session.post(f"{self.base_url}/game-series", json=series_data)
+                if response.status_code == 200:
+                    series = response.json()
+                    self.created_game_series.append(series)
+                    self.log_test(f"Create Game Series {i+1} ({series_data['series_name']})", True,
+                                f"Created with ID: {series['id']}")
+                else:
+                    self.log_test(f"Create Game Series {i+1}", False,
+                                f"Status: {response.status_code}, Response: {response.text}")
+            except Exception as e:
+                self.log_test(f"Create Game Series {i+1}", False, f"Error: {str(e)}")
+    
+    def test_get_all_game_series(self):
+        """Test retrieving all game series"""
+        try:
+            response = self.session.get(f"{self.base_url}/game-series")
+            if response.status_code == 200:
+                series_list = response.json()
+                if isinstance(series_list, list) and len(series_list) >= len(self.created_game_series):
+                    self.log_test("Get All Game Series", True, f"Retrieved {len(series_list)} game series")
+                else:
+                    self.log_test("Get All Game Series", False, 
+                                f"Expected list with at least {len(self.created_game_series)} series, got: {series_list}")
+            else:
+                self.log_test("Get All Game Series", False, f"Status: {response.status_code}")
+        except Exception as e:
+            self.log_test("Get All Game Series", False, f"Error: {str(e)}")
+    
+    def test_get_game_series_by_id(self):
+        """Test retrieving specific game series by ID"""
+        if not self.created_game_series:
+            self.log_test("Get Game Series by ID", False, "No game series created to test with")
+            return
+            
+        series_id = self.created_game_series[0]['id']
+        try:
+            response = self.session.get(f"{self.base_url}/game-series/{series_id}")
+            if response.status_code == 200:
+                series = response.json()
+                if series['id'] == series_id:
+                    self.log_test("Get Game Series by ID", True, f"Retrieved series: {series['series_name']}")
+                else:
+                    self.log_test("Get Game Series by ID", False, 
+                                f"ID mismatch: expected {series_id}, got {series['id']}")
+            else:
+                self.log_test("Get Game Series by ID", False, f"Status: {response.status_code}")
+        except Exception as e:
+            self.log_test("Get Game Series by ID", False, f"Error: {str(e)}")
+    
+    def test_add_game_to_series(self):
+        """Test adding games to existing game series"""
+        if not self.created_game_series:
+            self.log_test("Add Game to Series", False, "No game series created to test with")
+            return
+        
+        # Find Call of Duty series (should be empty)
+        cod_series = None
+        for series in self.created_game_series:
+            if series['series_name'] == "Call of Duty":
+                cod_series = series
+                break
+        
+        if not cod_series:
+            self.log_test("Add Game to Series", False, "Call of Duty series not found")
+            return
+        
+        new_games = [
+            {
+                "name": "Call of Duty: Modern Warfare",
+                "image_url": "https://images.igdb.com/igdb/image/upload/t_cover_big/co1wyf.jpg",
+                "time_played": "30 hours",
+                "completion_status": "Completed",
+                "rating": 8,
+                "notes": "Great campaign and multiplayer",
+                "platinum_status": False,
+                "trophies_earned": 40,
+                "trophies_total": 50
+            },
+            {
+                "name": "Call of Duty: Black Ops",
+                "image_url": "https://images.igdb.com/igdb/image/upload/t_cover_big/co1r9j.jpg",
+                "time_played": "25 hours",
+                "completion_status": "In Progress",
+                "rating": 8,
+                "notes": "Cold War setting",
+                "platinum_status": False,
+                "trophies_earned": 20,
+                "trophies_total": 45
+            }
+        ]
+        
+        for i, game in enumerate(new_games):
+            try:
+                response = self.session.post(f"{self.base_url}/game-series/{cod_series['id']}/games", 
+                                           json=game)
+                if response.status_code == 200:
+                    updated_series = response.json()
+                    if len(updated_series['games']) == i + 1:
+                        self.log_test(f"Add Game {i+1} to Series", True, 
+                                    f"Added '{game['name']}' to Call of Duty series")
+                    else:
+                        self.log_test(f"Add Game {i+1} to Series", False, 
+                                    f"Game count mismatch: expected {i+1}, got {len(updated_series['games'])}")
+                else:
+                    self.log_test(f"Add Game {i+1} to Series", False, 
+                                f"Status: {response.status_code}")
+            except Exception as e:
+                self.log_test(f"Add Game {i+1} to Series", False, f"Error: {str(e)}")
+    
+    def test_update_game_series(self):
+        """Test updating game series"""
+        if not self.created_game_series:
+            self.log_test("Update Game Series", False, "No game series created to test with")
+            return
+            
+        series_id = self.created_game_series[0]['id']
+        update_data = {
+            "series_name": "Grand Theft Auto Saga (Updated)"
+        }
+        
+        try:
+            response = self.session.put(f"{self.base_url}/game-series/{series_id}", json=update_data)
+            if response.status_code == 200:
+                updated_series = response.json()
+                if "Updated" in updated_series['series_name']:
+                    self.log_test("Update Game Series", True, "Game series name updated successfully")
+                else:
+                    self.log_test("Update Game Series", False, f"Update not reflected: {updated_series}")
+            else:
+                self.log_test("Update Game Series", False, f"Status: {response.status_code}")
+        except Exception as e:
+            self.log_test("Update Game Series", False, f"Error: {str(e)}")
+    
+    def test_game_series_validation(self):
+        """Test game series validation"""
+        # Test missing required field
+        incomplete_series = {}  # Missing required 'series_name' field
+        
+        try:
+            response = self.session.post(f"{self.base_url}/game-series", json=incomplete_series)
+            if response.status_code == 422:  # Validation error
+                self.log_test("Game Series Validation (Missing Name)", True, "Correctly rejected missing series name")
+            else:
+                self.log_test("Game Series Validation (Missing Name)", False, 
+                            f"Should reject missing series name, got status: {response.status_code}")
+        except Exception as e:
+            self.log_test("Game Series Validation (Missing Name)", False, f"Error: {str(e)}")
+    
+    
     def test_create_movie_series(self):
         """Test creating movie series with multiple movies"""
         test_series = [

@@ -30,6 +30,7 @@ api_router = APIRouter(prefix="/api")
 class Game(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str
+    image_url: str = ""  # URL for game cover image
     time_played: str  # "50 hours" or similar
     completion_status: str  # "Not Started", "In Progress", "Completed", "Platinum"
     rating: int = Field(ge=1, le=10)  # 1-10 scale
@@ -42,6 +43,7 @@ class Game(BaseModel):
 
 class GameCreate(BaseModel):
     name: str
+    image_url: str = ""
     time_played: str = ""
     completion_status: str = "Not Started"
     rating: int = Field(ge=1, le=10, default=1)
@@ -53,6 +55,7 @@ class GameCreate(BaseModel):
 
 class GameUpdate(BaseModel):
     name: Optional[str] = None
+    image_url: Optional[str] = None
     time_played: Optional[str] = None
     completion_status: Optional[str] = None
     rating: Optional[int] = Field(None, ge=1, le=10)
@@ -61,6 +64,22 @@ class GameUpdate(BaseModel):
     platinum_status: Optional[bool] = None
     trophies_earned: Optional[int] = None
     trophies_total: Optional[int] = None
+
+
+# Define Models for Game Series
+class GameSeries(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    series_name: str
+    games: List[Game] = []
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+class GameSeriesCreate(BaseModel):
+    series_name: str
+    games: List[GameCreate] = []
+
+class GameSeriesUpdate(BaseModel):
+    series_name: Optional[str] = None
+    games: Optional[List[Game]] = None
 
 
 # Define Models for Movie Series

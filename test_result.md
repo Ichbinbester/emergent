@@ -111,7 +111,7 @@ backend:
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: "NA"
         agent: "main"
@@ -119,6 +119,21 @@ backend:
       - working: true
         agent: "testing"
         comment: "✅ COMPREHENSIVE TESTING COMPLETED - All 11 game-related tests passed (100% success rate). Tested: CREATE games with realistic data (Witcher 3, Cyberpunk 2077, Elden Ring), GET all games, GET by ID, UPDATE game status/trophies, validation (rating 1-10, required fields), 404 error handling, DELETE operations. All CRUD operations working perfectly with proper validation and error handling."
+      - working: "NA"
+        agent: "main"
+        comment: "EXTENDED: Added image_url field to Game model for cover images. Needs retesting with new field."
+        
+  - task: "Game Series CRUD API"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "NEW FEATURE: Implemented GameSeries model similar to MovieSeries but for games. Includes ability to add games to series. All CRUD endpoints created for game series organization."
   
   - task: "Movie Series CRUD API"
     implemented: true

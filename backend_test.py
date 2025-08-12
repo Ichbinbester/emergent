@@ -19,6 +19,7 @@ class BackendTester:
         self.test_results = []
         self.created_games = []
         self.created_series = []
+        self.created_game_series = []
         
     def log_test(self, test_name: str, success: bool, details: str = ""):
         """Log test results"""

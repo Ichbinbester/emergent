@@ -56,6 +56,7 @@ class BackendTester:
         test_games = [
             {
                 "name": "The Witcher 3: Wild Hunt",
+                "image_url": "https://images.igdb.com/igdb/image/upload/t_cover_big/co1wyy.jpg",
                 "time_played": "120 hours",
                 "completion_status": "Completed",
                 "rating": 10,
@@ -67,6 +68,7 @@ class BackendTester:
             },
             {
                 "name": "Cyberpunk 2077",
+                "image_url": "https://images.igdb.com/igdb/image/upload/t_cover_big/co2rpf.jpg",
                 "time_played": "45 hours",
                 "completion_status": "In Progress",
                 "rating": 7,
@@ -78,6 +80,7 @@ class BackendTester:
             },
             {
                 "name": "Elden Ring",
+                "image_url": "https://images.igdb.com/igdb/image/upload/t_cover_big/co4jni.jpg",
                 "time_played": "0 hours",
                 "completion_status": "Not Started",
                 "rating": 1,

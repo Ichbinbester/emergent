@@ -649,12 +649,20 @@ class BackendTester:
             print("❌ API is not accessible. Stopping tests.")
             return False
         
-        print("\n--- GAMES API TESTING ---")
+        print("\n--- GAMES API TESTING (with image_url support) ---")
         self.test_create_game()
         self.test_get_all_games()
         self.test_get_game_by_id()
         self.test_update_game()
         self.test_game_validation()
+        
+        print("\n--- GAME SERIES API TESTING (NEW FEATURE) ---")
+        self.test_create_game_series()
+        self.test_get_all_game_series()
+        self.test_get_game_series_by_id()
+        self.test_add_game_to_series()
+        self.test_update_game_series()
+        self.test_game_series_validation()
         
         print("\n--- MOVIE SERIES API TESTING ---")
         self.test_create_movie_series()

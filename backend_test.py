@@ -602,6 +602,23 @@ class BackendTester:
             except Exception as e:
                 self.log_test("Delete Game", False, f"Error: {str(e)}")
         
+        # Delete a game series
+        if self.created_game_series:
+            series_id = self.created_game_series[-1]['id']  # Delete last created game series
+            try:
+                response = self.session.delete(f"{self.base_url}/game-series/{series_id}")
+                if response.status_code == 200:
+                    # Verify it's deleted
+                    verify_response = self.session.get(f"{self.base_url}/game-series/{series_id}")
+                    if verify_response.status_code == 404:
+                        self.log_test("Delete Game Series", True, "Game series deleted successfully")
+                    else:
+                        self.log_test("Delete Game Series", False, "Game series still exists after deletion")
+                else:
+                    self.log_test("Delete Game Series", False, f"Status: {response.status_code}")
+            except Exception as e:
+                self.log_test("Delete Game Series", False, f"Error: {str(e)}")
+        
         # Delete a movie series
         if self.created_series:
             series_id = self.created_series[-1]['id']  # Delete last created series

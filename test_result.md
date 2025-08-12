@@ -151,7 +151,7 @@ backend:
         comment: "✅ COMPREHENSIVE TESTING COMPLETED - All 11 movie series tests passed (100% success rate). Tested: CREATE series with multiple movies (Star Wars, Marvel MCU, Matrix), GET all series, GET by ID, ADD movies to existing series (tested with Matrix trilogy), UPDATE series name, 404 error handling, DELETE operations. All CRUD operations including the special 'add movie to series' endpoint working perfectly."
 
 frontend:
-  - task: "Games Management UI"
+  - task: "Games Management UI with Images"
     implemented: true
     working: "NA" 
     file: "/app/frontend/src/App.js"
@@ -162,7 +162,22 @@ frontend:
       - working: "NA"
         agent: "main"
         comment: "Created complete games management with modal forms, cards display, all required fields including trophy tracking and platinum status."
+      - working: "NA"
+        agent: "main"
+        comment: "ENHANCED: Added image support with beautiful game cover display above titles. Included sample gaming images from vision expert. Added image URL input and preview. Game cards now show images with hover effects."
   
+  - task: "Game Series Management UI"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/App.js" 
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "NEW FEATURE: Created Game Series management similar to Movie Series. Added third tab for organizing games into series (like GTA, Assassins Creed). Expandable series cards showing game covers and info."
+        
   - task: "Movie Series Management UI"
     implemented: true
     working: "NA"
@@ -174,6 +189,9 @@ frontend:
       - working: "NA"
         agent: "main"
         comment: "Created Netflix-style movie series organization with expandable cards, ability to group movies under series names like 'Star Wars'."
+      - working: "NA"
+        agent: "main"
+        comment: "UPDATED: Improved UI with better tab navigation. Now has 3 tabs: Games, Game Series, Movies."
 
 metadata:
   created_by: "main_agent"

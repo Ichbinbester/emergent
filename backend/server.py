@@ -150,6 +150,71 @@ async def delete_game(game_id: str):
     return {"message": "Game deleted successfully"}
 
 
+# Game Series Routes
+@api_router.post("/game-series", response_model=GameSeries)
+async def create_game_series(series: GameSeriesCreate):
+    series_dict = series.dict()
+    series_obj = GameSeries(**series_dict)
+    await db.game_series.insert_one(series_obj.dict())
+    return series_obj
+
+@api_router.get("/game-series", response_model=List[GameSeries])
+async def get_game_series():
+    series_list = await db.game_series.find().to_list(1000)
+    return [GameSeries(**series) for series in series_list]
+
+@api_router.get("/game-series/{series_id}", response_model=GameSeries)
+async def get_game_series_by_id(series_id: str):
+    series = await db.game_series.find_one({"id": series_id})
+    if not series:
+        raise HTTPException(status_code=404, detail="Game series not found")
+    return GameSeries(**series)
+
+@api_router.put("/game-series/{series_id}", response_model=GameSeries)
+async def update_game_series(series_id: str, series_update: GameSeriesUpdate):
+    existing_series = await db.game_series.find_one({"id": series_id})
+    if not existing_series:
+        raise HTTPException(status_code=404, detail="Game series not found")
+    
+    update_data = {}
+    for field, value in series_update.dict().items():
+        if value is not None:
+            update_data[field] = value
+    
+    if update_data:
+        await db.game_series.update_one({"id": series_id}, {"$set": update_data})
+    
+    updated_series = await db.game_series.find_one({"id": series_id})
+    return GameSeries(**updated_series)
+
+@api_router.delete("/game-series/{series_id}")
+async def delete_game_series(series_id: str):
+    result = await db.game_series.delete_one({"id": series_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Game series not found")
+    return {"message": "Game series deleted successfully"}
+
+# Add game to existing series
+@api_router.post("/game-series/{series_id}/games")
+async def add_game_to_series(series_id: str, game: GameCreate):
+    series = await db.game_series.find_one({"id": series_id})
+    if not series:
+        raise HTTPException(status_code=404, detail="Game series not found")
+    
+    # Create game object with ID
+    game_dict = game.dict()
+    game_obj = Game(**game_dict)
+    
+    # Add game to the games array
+    await db.game_series.update_one(
+        {"id": series_id}, 
+        {"$push": {"games": game_obj.dict()}}
+    )
+    
+    updated_series = await db.game_series.find_one({"id": series_id})
+    return GameSeries(**updated_series)
+
+
 # Movie Series Routes
 @api_router.post("/movie-series", response_model=MovieSeries)
 async def create_movie_series(series: MovieSeriesCreate):

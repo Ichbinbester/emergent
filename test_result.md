@@ -168,8 +168,6 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Game CRUD API"
-    - "Movie Series CRUD API"
     - "Games Management UI"
     - "Movie Series Management UI"
   stuck_tasks: []

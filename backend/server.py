@@ -256,7 +256,7 @@ app.include_router(api_router)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_credentials=True,
+    allow_credentials=False,  # <- wichtig: keine Credentials, damit ["*"]/mehrere Origins funktionieren
     allow_origins=CORS_ORIGINS.split(',') if isinstance(CORS_ORIGINS, str) else CORS_ORIGINS,
     allow_methods=["*"],
     allow_headers=["*"],

@@ -18,8 +18,11 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./App.css"; // falls Styles vorhanden
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || ""; // '' => gleiche Origin
+import API_BASE from "./config";
+
+const BACKEND_URL = API_BASE || process.env.REACT_APP_BACKEND_URL || "";
 const API = `${BACKEND_URL}/api`;
+
 
 // ------------------
 // API Service
